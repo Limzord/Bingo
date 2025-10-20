@@ -116,13 +116,13 @@ function getCookieExpiryDate() {
 }
 
 function showWinScreen() {
-  document.getElementById("winScreen").style.height = "100%";
-  throwConfetti();
+    document.getElementById("winScreen").style.height = "100%";
+    throwConfetti();
 }
 
 function hideWinScreen() {
-  document.getElementById("winScreen").style.height = "0%";
-  stopConfetti();
+    document.getElementById("winScreen").style.height = "0%";
+    stopConfetti();
 }
 
 var confettiOn;
