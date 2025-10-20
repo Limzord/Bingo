@@ -47,7 +47,7 @@ td {
     overflow: hidden;
     vertical-align: middle;
     text-align: center;
-    position: relative; /* needed for absolute child positioning */
+    position: relative;
 }
 
 .cell-text {
@@ -81,6 +81,7 @@ td {
     padding: 6px;
     box-sizing: border-box;
     overflow: hidden;
+    pointer-events: none;
 }
 
 .overlay {
