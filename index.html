@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TMMD Bingo</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <div id="winScreen" class="overlay" onClick="hideWinScreen()">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+
+        <div class="overlay-content">
+            <a href="#" id="bingo">BINGO!!!</a>
+            <a>share with the class :)</a>
+        </div>
+
+    </div>
+    <div class="board-surrounding">
+        <div class="bingo-board">
+        <table>
+            <tr>
+                <td id="bingo-1" onclick="clickElement(1)"></td>
+                <td id="bingo-2" onclick="clickElement(2)"></td>
+                <td id="bingo-3" onclick="clickElement(3)"></td>
+                <td id="bingo-4" onclick="clickElement(4)"></td>
+                <td id="bingo-5" onclick="clickElement(5)"></td>
+            </tr>
+            <tr>
+                <td id="bingo-6" onclick="clickElement(6)"></td>
+                <td id="bingo-7" onclick="clickElement(7)"></td>
+                <td id="bingo-8" onclick="clickElement(8)"></td>
+                <td id="bingo-9" onclick="clickElement(9)"></td>
+                <td id="bingo-10" onclick="clickElement(10)"></td>
+            </tr>
+            <tr>
+                <td id="bingo-11" onclick="clickElement(11)"></td>
+                <td id="bingo-12" onclick="clickElement(12)"></td>
+                <td id="bingo-free" onclick="clickElement('free')"></td>
+                <td id="bingo-13" onclick="clickElement(13)"></td>
+                <td id="bingo-14" onclick="clickElement(14)"></td>
+            </tr>
+            <tr>
+                <td id="bingo-15" onclick="clickElement(15)"></td>
+                <td id="bingo-16" onclick="clickElement(16)"></td>
+                <td id="bingo-17" onclick="clickElement(17)"></td>
+                <td id="bingo-18" onclick="clickElement(18)"></td>
+                <td id="bingo-19" onclick="clickElement(19)"></td>
+            </tr>
+            <tr>
+                <td id="bingo-20" onclick="clickElement(20)"></td>
+                <td id="bingo-21" onclick="clickElement(21)"></td>
+                <td id="bingo-22" onclick="clickElement(22)"></td>
+                <td id="bingo-23" onclick="clickElement(23)"></td>
+                <td id="bingo-24" onclick="clickElement(24)"></td>
+            </tr>
+        </table>
+        </div>
+    </div>
+    <button onclick="fillBingoBoard()" id="piss">fill bingo board</button>
+</body>
+</html>
