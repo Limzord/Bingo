@@ -47,27 +47,40 @@ td {
     overflow: hidden;
     vertical-align: middle;
     text-align: center;
-    position: static;
+    position: relative; /* needed for absolute child positioning */
 }
 
 .cell-text {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 100%;
-    padding: 4px;
-    box-sizing: border-box;
+    display: inline-block;
+    font-size: 100px;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+
+    word-break: break-word;
+    max-width: 100%;
+    max-height: 100%;
+
+    overflow-wrap: break-word;
     text-align: center;
+
+    white-space: normal;
 }
 
-.cell-text span {
-    display: inline-block;
-    width: 100%;
-    white-space: normal;
-    word-wrap: break-word;
-    line-height: 1.2;
-    font-size: 10vw;
+.cell-wrapper {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 6px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .overlay {

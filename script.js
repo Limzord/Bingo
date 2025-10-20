@@ -17,11 +17,11 @@ function fillBingoBoard() {
             randomElement = data.values[Math.floor(Math.random() * data.values.length)];
             } while (usedElements.includes(randomElement));
             usedElements.push(randomElement);
-            document.getElementById('bingo-'+i).innerHTML = `<div class="cell-text"><span>${randomElement}</span></div>`;
+            document.getElementById('bingo-'+i).innerHTML = `<div class="cell-wrapper"><span class="cell-text">${randomElement}</span></div>`;
 
 
         }
-        document.getElementById('bingo-free').innerHTML = `<div class="cell-text"><span>${data.free}</span></div>`;
+        document.getElementById('bingo-free').innerHTML = `<div class="cell-wrapper"><span class="cell-text">${data.free}</span></div>`;
         shrinkTextToFit();
     });
 }
@@ -155,23 +155,17 @@ function stopConfetti() {
 }
 
 function shrinkTextToFit() {
-    const spans = document.querySelectorAll('.cell-text span');
-
-    spans.forEach(span => {
+    document.querySelectorAll('.cell-text').forEach(span => {
         const container = span.parentElement;
-
         let fontSize = 10 * Math.min(window.innerWidth, window.innerHeight) / 100;
         span.style.fontSize = fontSize + "px";
 
-        requestAnimationFrame(() => {
-        while (
-            (span.scrollHeight > container.clientHeight || span.scrollWidth > container.clientWidth) &&
-            fontSize > 5
-        ) {
-            fontSize -= 1;
-            span.style.fontSize = fontSize + "px";
+        const errorTolerance = 6;
+
+        while ((span.scrollHeight > container.clientHeight -errorTolerance || span.scrollWidth > container.clientWidth - errorTolerance) && fontSize > 5) {
+        fontSize--;
+        span.style.fontSize = fontSize + "px";
         }
-        });
     });
 }
 
