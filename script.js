@@ -17,11 +17,12 @@ function fillBingoBoard() {
             randomElement = data.values[Math.floor(Math.random() * data.values.length)];
             } while (usedElements.includes(randomElement));
             usedElements.push(randomElement);
-            document.getElementById('bingo-'+i).innerHTML = randomElement;
+            document.getElementById('bingo-'+i).innerHTML = `<div class="cell-text"><span>${randomElement}</span></div>`;
 
 
         }
-        document.getElementById('bingo-free').innerHTML = data.free;
+        document.getElementById('bingo-free').innerHTML = `<div class="cell-text"><span>${data.free}</span></div>`;
+        shrinkTextToFit();
     });
 }
 function clickElement(number) {
@@ -152,3 +153,27 @@ confettiOn = true;
 function stopConfetti() {
     confettiOn = false;
 }
+
+function shrinkTextToFit() {
+    const spans = document.querySelectorAll('.cell-text span');
+
+    spans.forEach(span => {
+        const container = span.parentElement;
+
+        let fontSize = 10 * Math.min(window.innerWidth, window.innerHeight) / 100;
+        span.style.fontSize = fontSize + "px";
+
+        requestAnimationFrame(() => {
+        while (
+            (span.scrollHeight > container.clientHeight || span.scrollWidth > container.clientWidth) &&
+            fontSize > 5
+        ) {
+            fontSize -= 1;
+            span.style.fontSize = fontSize + "px";
+        }
+        });
+    });
+}
+
+window.addEventListener("load", shrinkTextToFit);
+window.addEventListener("resize", shrinkTextToFit);
