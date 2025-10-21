@@ -10,3 +10,5 @@ web Bingo game which
 
 
 if you fork this, you'll definitely have to modify the code somewhat to point to your own server's endpoints
+
+<sub>this codebase is currently an absolute mess, I'll probably clean it up at some point but for now, it works :P</sub>
