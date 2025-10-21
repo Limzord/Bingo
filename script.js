@@ -131,7 +131,9 @@ function loadCookieData() {
 function getCookieExpiryDate() {
     const date = new Date();
 
-    date.setDate(date.getDate() + 1);
+    if (date.getHours() >= 7) {
+        date.setDate(date.getDate() + 1);
+    }
 
     date.setHours(7, 0, 0, 0);
 
