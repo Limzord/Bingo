@@ -26,14 +26,11 @@ function fillBingoBoard() {
     });
 }
 function clickElement(number) {
-    if (checkClicked(number)) {
-        document.getElementById('bingo-'+number).setAttribute("data-clicked", false);
-    } else {
-        document.getElementById('bingo-'+number).setAttribute("data-clicked", true);
-    }
-    if (checkWin()) {
-        showWinScreen();
-    }
+    const cell = document.getElementById('bingo-' + number);
+    cell.setAttribute("data-clicked", !checkClicked(number));
+    saveToCookie(Save.PROGRESS);
+
+    if (checkWin()) showWinScreen();
 }
 function checkClicked(number) {
     if (document.getElementById('bingo-'+number).getAttribute("data-clicked") == "true")
