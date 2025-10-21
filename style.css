@@ -3,7 +3,7 @@ html * {
 }
 html body {
     height: 100%;
-    background: #80db2a;
+    background: #681f92;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
@@ -22,8 +22,9 @@ html body {
     box-sizing: border-box;
     left: 0;
     top: 0;
-    z-index: 1000;
+    z-index: 1;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
 }
 
 /* 🔹 Left Section (links + logo) */
@@ -36,7 +37,7 @@ html body {
 .nav-logo {
     font-size: 1.4em;
     font-weight: bold;
-    color: #ffcc00;
+    color: #f53e4d;
     text-decoration: none;
 }
 
@@ -47,7 +48,7 @@ html body {
 }
 
 .nav-link:hover {
-    color: #ffcc00;
+    color: #f53e4d;
 }
 
 /* 🔹 Right Section (login area) */
@@ -65,7 +66,7 @@ html body {
 }
 
 .navbar-right button {
-    background-color: #ffcc00;
+    background-color: #f53e4d;
     border: none;
     border-radius: 4px;
     padding: 6px 12px;
@@ -75,13 +76,156 @@ html body {
 }
 
 .navbar-right button:hover {
-    background-color: #e6b800;
+    background-color: #eb2132;
 }
+
+.hamburger-icon {
+  z-index:2;
+  display: none;
+  cursor: pointer;
+  top: 10px;
+  right: 10px;
+  position:fixed;
+}
+
+.bar1, .bar2, .bar3 {
+  width: 35px;
+  height: 5px;
+  background-color: #eee;
+  margin: 6px 0;
+  transition: 0.4s;
+}
+
+/* Rotate first bar */
+.change .bar1 {
+  transform: translate(0, 11px) rotate(-45deg);
+}
+
+/* Fade out the second bar */
+.change .bar2 {opacity: 0;}
+
+/* Rotate last bar */
+.change .bar3 {
+  transform: translate(0, -11px) rotate(45deg);
+}
+
+#login-reminder {
+    display:none;
+}
+
+
+
+@media screen and (max-width: 768px) {
+    #login-reminder {
+        display: flex;
+        font-size: x-large;
+    }
+
+    .hamburger-icon {
+        display: block;
+        z-index: 10;
+    }
+
+    .hamburger-icon * {
+        z-index: 10;
+    }
+
+    .navbar-left {
+        position: relative;
+        top: 0%;
+        width: 100%;
+        text-align: center;
+        margin-top: 30px;
+    }
+    .navbar-right button {
+        background-color: #f53e4d;
+        border: none;
+        border-radius: 4px;
+        padding: 6px 12px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .navbar-right button:hover {
+        background-color: #e22c3bd2;
+    }
+
+    .navbar-right {
+        /* position: relative; */
+        /* top: 0%; */
+        width: 100%;
+        text-align: center;
+        /* margin-top: 30px; */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        margin: 20px, 0;
+    }
+
+    .navbar-right input {
+        padding: 6px 8px;
+        border-radius: 4px;
+        border: none;
+        outline: none;
+    }
+
+    .navbar {
+        flex-direction: column;
+        justify-content: top;
+        position: fixed;
+        align-items: center;
+        height: 0;
+        overflow-x: hidden;
+        background-color: rgba(0,0,0,0.9);
+        justify-content: flex-start;
+        /* transition: height 0.4s ease; */
+        background: none;
+        box-shadow: none;
+    }
+
+    .navbar.hamburger-open {
+        height: 100%;
+        width: 100%;
+        position: fixed; 
+        z-index: 1;
+        left: 0;
+        top: 0;
+        background-color: rgb(0,0,0);
+        background-color: rgba(0,0,0, 0.9);
+        overflow-x: hidden;
+        transition: 0.5s;
+    }
+
+    .navbar a {
+        padding: 8px;
+        text-decoration: none;
+        font-size: 36px;
+        color: #f53e4d;
+        display: block;
+        transition: 0.3s;
+    }
+
+    .navbar a:hover, .navbar a:focus {
+        color: #f194a4;
+    }
+
+    .navbar-left, .navbar-right {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+        margin: 20px 0;
+    }
+}
+
 .reset-button {
-    position: fixed;
+    position: absolute;
     bottom: 1rem;
-    right: 1rem;
-    background: #c62828;
+    left: 50%;            /* Start at center */
+    transform: translateX(-50%);
+    /* right: 1rem; */
+    background: #f53e4d;
     color: white;
     border: none;
     border-radius: 8px;
@@ -90,7 +234,7 @@ html body {
     font-size: 1rem;
 }
 .reset-button:hover {
-    background: #b71c1c;
+    background: #e22c3bd2;
 }
 .board-surrounding {
     margin-top: 3vh;
@@ -120,11 +264,15 @@ table, th, td {
     width: 100%;
     height: 100%;
 }
-[data-clicked ="true"] {
+[data-clicked = "true"] {
     background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' preserveAspectRatio='none' viewBox='0 0 100 100'><path d='M100 0 L0 100 ' stroke='red' stroke-width='3'/><path d='M0 0 L100 100 ' stroke='red' stroke-width='3'/></svg>");
     background-repeat:no-repeat;
     background-position:center center;
     background-size: 100% 100%, auto;
+}
+
+td:hover{
+    background-color: #6c239649;
 }
 
 td {
@@ -202,7 +350,8 @@ td {
 }
 
 .overlay #bingo {
-    font-size: 36vh;
+    font-size: min(20vh,20vw);
+    pointer-events: none;
 }
 
 /* When you mouse over the navigation links, change their color */
@@ -227,6 +376,7 @@ td {
     }
 }
 
+
 /* --- Overlay --- */
 .start-overlay {
     position: fixed;
@@ -235,21 +385,21 @@ td {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 100;
+    /* z-index: 100; */
 }
 
 .start-overlay-content {
-    background: #222;
+    /* background: #222; */
     color: #fff;
     text-align: center;
     padding: 2rem;
     border-radius: 1rem;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    /* box-shadow: 0 0 20px rgba(0,0,0,0.5); */
 }
 
 .start-overlay-button {
     margin-top: 1rem;
-    background: #4caf50;
+    background: #f53e4d;
     border: none;
     color: white;
     padding: 0.75rem 1.5rem;
@@ -258,7 +408,7 @@ td {
     font-size: 1.1rem;
 }
 .start-overlay-button:hover {
-    background: #43a047;
+    background: #e22c3bd2;
 }
 
 /* --- Popup --- */
@@ -290,13 +440,17 @@ td {
     margin-top: 1rem;
 }
 .popup-confirm {
-    background: #d32f2f;
+    background: #f53e4d;
     border: none;
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 6px;
     cursor: pointer;
 }
+.popup-confirm:hover {
+    background: #c52331;
+}
+
 .popup-cancel {
     background: #9e9e9e;
     border: none;
@@ -304,4 +458,7 @@ td {
     padding: 0.5rem 1rem;
     border-radius: 6px;
     cursor: pointer;
+}
+.popup-cancel:hover {
+    background: #707070;
 }

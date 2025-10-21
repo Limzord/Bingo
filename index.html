@@ -9,27 +9,28 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-    <div id="winScreen" class="overlay">
-        <a href="javascript:void(0)" class="closebtn" onclick="hideWinScreen()">&times;</a>
+    <div id="winScreen" class="overlay" onclick="hideWinScreen()">
+        <!-- <a class="closebtn">&times;</a> -->
 
         <div class="overlay-content">
-            <a href="#" id="bingo">BINGO!!!</a>
+            <a id="bingo">BINGO!!!</a>
             <a>share with the class :)</a>
         </div>
 
     </div>
-    <nav class="navbar">
+    <div class="hamburger-icon" onclick="toggleHamburgerMenu(this)">
+    <div class="bar1"></div>
+    <div class="bar2"></div>
+    <div class="bar3"></div>
+    </div>
+
+    <nav class="navbar" id="main-navbar">
     <div class="navbar-left">
         <a href="https://tmmd.club" class="nav-logo">TMMD</a>
         <a href="." class="nav-link">Bingo</a>
     </div>
 
-    <div class="navbar-right" id="login-area">
-        <input type="text" id="username" placeholder="Username" />
-        <input type="password" id="password" placeholder="Password" />
-        <button onclick="login()">Login</button>
-        <button onclick="register()">Register</button>
-    </div>
+    <div class="navbar-right" id="login-area"></div>
     </nav>
     <div class="board-surrounding">
         <div class="bingo-board">
@@ -71,27 +72,26 @@
             </tr>
         </table>
         </div>
-    </div>
-    <!-- Overlay shown when no cookie -->
-    <div id="start-overlay" class="start-overlay">
-    <div class="start-overlay-content">
-        <h2>Welcome to TMMD Bingo!</h2>
-        <p>Click below to generate your new bingo board.</p>
-        <button onclick="generateNewBoard()" class="start-overlay-button">Generate Bingo Board</button>
-    </div>
+        <div id="start-overlay" class="start-overlay">
+        <div class="start-overlay-content">
+            <h2>Welcome to TMMD Bingo!</h2>
+            <p><strong>Make sure you're in vc and then</strong></p>
+            <button onclick="generateNewBoard()" class="start-overlay-button">Generate Bingo Board</button>
+        </div>
+        </div>
     </div>
 
-    <!-- Popup for reset confirmation -->
+
     <div id="resetPopup" class="popup hidden">
     <div class="popup-content">
         <h3>Reset Bingo Board?</h3>
-        <p>This will erase your current progress and start a new game.</p>
+        <p>This will start a new game.</p>
         <div class="popup-buttons">
-        <button onclick="confirmReset()" class="popup-confirm">Yes, reset</button>
+        <button onclick="confirmReset()" class="popup-confirm">Reset</button>
         <button onclick="closePopup()" class="popup-cancel">Cancel</button>
         </div>
     </div>
     </div>
-    <button onclick="openPopup()" class="reset-button">Generate new Bingo Board</button>
+    <button onclick="openPopup()" class="reset-button">Reset Bingo Board</button>
 </body>
 </html>
