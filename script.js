@@ -3,10 +3,12 @@ const Save = Object.freeze({
     PROGRESS: 1,
     BOTH: 2
 })
-function fillBingoBoard() {
-    if(document.cookie) {
-
+function fillBingoBoard(force = false) {
+    if (!force && loadFromCookie()) {
+        console.log("Loaded board from cookie!");
+        return;
     }
+    console.log(force ? "Forcing new board..." : "No cookie found, generating new board...");
     fetch("./bingo.json")
     .then(response => response.json())
     .then(data => {
@@ -18,11 +20,14 @@ function fillBingoBoard() {
             } while (usedElements.includes(randomElement));
             usedElements.push(randomElement);
             document.getElementById('bingo-'+i).innerHTML = `<div class="cell-wrapper"><span class="cell-text">${randomElement}</span></div>`;
+            document.getElementById('bingo-'+i).setAttribute("data-clicked", "false");
 
 
         }
         document.getElementById('bingo-free').innerHTML = `<div class="cell-wrapper"><span class="cell-text">${data.free}</span></div>`;
+        document.getElementById('bingo-free').setAttribute("data-clicked", "false");
         shrinkTextToFit();
+        saveToCookie(Save.VALUES);
     });
 }
 function clickElement(number) {
@@ -73,34 +78,76 @@ function checkWinDiagonal() {
 }
 
 function saveToCookie(type) {
-    var cookie;
-    if (type == Save.VALUES)
-        cookie = getValuesToCookie();
-    else if (type == Save.PROGRESS)
-        cookie = getProgressToCookie();
-    else if (type == Save.BOTH) {
-        cookie = getValuesToCookie();
-        cookie = cookie + getProgressToCookie();
+    // Load current cookie (if any)
+    let existing = loadCookieData() || {};
+
+    if (type == Save.VALUES || type == Save.BOTH) {
+        existing.values = getValuesToSave();
     }
-    let expiryDate = getCookieExpiryDate();
-    cookie = cookie + "expires="+expiryDate+";"
-    document.cookie = cookie;
+    if (type == Save.PROGRESS || type == Save.BOTH) {
+        existing.progress = getProgressToSave();
+    }
+
+    const expiryDate = getCookieExpiryDate();
+    document.cookie = "bingoData=" + encodeURIComponent(JSON.stringify(existing)) + "; expires=" + expiryDate + "; path=/";
 }
-function getValuesToCookie() {
-    var cookie;
-    cookie = cookie + "valueFree="+document.getElementById('bingo-free').innerHTML+"; ";
-    for (i = 1; i <= 24; i++) {
-        cookie = cookie + "value"+i+"="+document.getElementById('bingo-'+i).innerHTML+"; ";
+
+function getValuesToSave() {
+    const values = {};
+    values["free"] = document.querySelector('#bingo-free .cell-text').textContent;
+    for (let i = 1; i <= 24; i++) {
+        values[i] = document.querySelector(`#bingo-${i} .cell-text`).textContent;
     }
-    return cookie;
+    return values;
 }
-function getProgressToCookie() {
-    var cookie;
-    cookie = cookie + "progressFree="+checkClicked("free")+"; ";
-    for (i = 1; i <= 24; i++) {
-        cookie = cookie + "progress"+i+"="+checkClicked(i)+"; ";
+
+function getProgressToSave() {
+    const progress = {};
+    progress["free"] = checkClicked("free") ? "true" : "false";
+    for (let i = 1; i <= 24; i++) {
+        progress[i] = checkClicked(i) ? "true" : "false";
     }
-    return cookie;
+    return progress;
+}
+
+function loadFromCookie() {
+    const data = loadCookieData();
+    if (!data) return false;
+
+    if (data.values) {
+        for (let i = 1; i <= 24; i++) {
+            const text = data.values[i];
+            document.getElementById('bingo-' + i).innerHTML =
+                `<div class="cell-wrapper"><span class="cell-text">${text}</span></div>`;
+        }
+        if (data.values.free) {
+            document.getElementById('bingo-free').innerHTML =
+                `<div class="cell-wrapper"><span class="cell-text">${data.values.free}</span></div>`;
+        }
+    }
+
+    if (data.progress) {
+        for (let i = 1; i <= 24; i++) {
+            document.getElementById('bingo-' + i)
+                .setAttribute("data-clicked", data.progress[i] === "true" ? "true" : "false");
+        }
+        document.getElementById('bingo-free')
+            .setAttribute("data-clicked", data.progress.free === "true" ? "true" : "false");
+    }
+
+    shrinkTextToFit();
+    return true;
+}
+
+function loadCookieData() {
+    const cookie = document.cookie.split("; ").find(row => row.startsWith("bingoData="));
+    if (!cookie) return null;
+    try {
+        return JSON.parse(decodeURIComponent(cookie.split("=")[1]));
+    } catch (e) {
+        console.error("Error parsing cookie:", e);
+        return null;
+    }
 }
 
 function getCookieExpiryDate() {
@@ -111,6 +158,28 @@ function getCookieExpiryDate() {
     date.setHours(7, 0, 0, 0);
 
     return date.toUTCString();
+}
+
+function resetBingoBoard() {
+    // clear cookie
+    document.cookie = "bingoData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    
+    // clear current board visually (optional)
+    for (let i = 1; i <= 24; i++) {
+        const cell = document.getElementById('bingo-' + i);
+        if (cell) {
+            cell.innerHTML = '';
+            cell.removeAttribute("data-clicked");
+        }
+    }
+    const free = document.getElementById('bingo-free');
+    if (free) {
+        free.innerHTML = '';
+        free.removeAttribute("data-clicked");
+    }
+
+    // Show overlay again
+    showOverlay();
 }
 
 function showWinScreen() {
@@ -166,5 +235,90 @@ function shrinkTextToFit() {
     });
 }
 
-window.addEventListener("load", shrinkTextToFit);
+function showOverlay() {
+    document.getElementById('start-overlay').style.display = 'flex';
+}
+
+function hideOverlay() {
+    document.getElementById('start-overlay').style.display = 'none';
+}
+
+function openPopup() {
+    document.getElementById('resetPopup').classList.remove('hidden');
+}
+
+function closePopup() {
+    document.getElementById('resetPopup').classList.add('hidden');
+}
+
+function confirmReset() {
+    closePopup();
+    resetBingoBoard();
+}
+
+// === Bingo Reset + Generation ===
+function generateNewBoard() {
+    hideOverlay();
+    fillBingoBoard(true);
+}
+
+function login() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+
+    if (!username || !password) {
+        alert("Please enter both username and password!");
+        return;
+    }
+
+    // Simple simulation for now
+    console.log(`Logging in as ${username}...`);
+
+    // Save login info locally for session (later we’ll do secure server-side auth)
+    localStorage.setItem("loggedInUser", username);
+
+    updateLoginUI();
+}
+
+function logout() {
+    localStorage.removeItem("loggedInUser");
+    updateLoginUI();
+}
+
+function register() {
+    window.location.href = "https://support.mail.tmmd.club";
+}
+
+function updateLoginUI() {
+    const loginArea = document.getElementById("login-area");
+    const user = localStorage.getItem("loggedInUser");
+
+    if (user) {
+        loginArea.innerHTML = `
+        <span>Welcome, <strong>${user}</strong></span>
+        <button onclick="logout()">Logout</button>
+        `;
+    } else {
+        loginArea.innerHTML = `
+        <input type="text" id="username" placeholder="Username" />
+        <input type="password" id="password" placeholder="Password" />
+        <button onclick="login()">Login</button>
+        <button onclick="register()">Register</button>
+        `;
+    }
+}
+
+// Initialize UI on page load
+window.addEventListener("load", updateLoginUI);
+
+window.addEventListener("DOMContentLoaded", () => {
+    const loaded = loadFromCookie();
+    console.log("Cookie load result:", loaded);
+    if (loaded) {
+        hideOverlay();
+    } else {
+        showOverlay();
+    }
+    shrinkTextToFit();
+});
 window.addEventListener("resize", shrinkTextToFit);

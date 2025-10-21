@@ -18,6 +18,19 @@
         </div>
 
     </div>
+    <nav class="navbar">
+    <div class="navbar-left">
+        <a href="https://tmmd.club" class="nav-logo">TMMD</a>
+        <a href="." class="nav-link">Bingo</a>
+    </div>
+
+    <div class="navbar-right" id="login-area">
+        <input type="text" id="username" placeholder="Username" />
+        <input type="password" id="password" placeholder="Password" />
+        <button onclick="login()">Login</button>
+        <button onclick="register()">Register</button>
+    </div>
+    </nav>
     <div class="board-surrounding">
         <div class="bingo-board">
         <table>
@@ -59,6 +72,26 @@
         </table>
         </div>
     </div>
-    <button onclick="fillBingoBoard()" id="piss">fill bingo board</button>
+    <!-- Overlay shown when no cookie -->
+    <div id="start-overlay" class="start-overlay">
+    <div class="start-overlay-content">
+        <h2>Welcome to TMMD Bingo!</h2>
+        <p>Click below to generate your new bingo board.</p>
+        <button onclick="generateNewBoard()" class="start-overlay-button">Generate Bingo Board</button>
+    </div>
+    </div>
+
+    <!-- Popup for reset confirmation -->
+    <div id="resetPopup" class="popup hidden">
+    <div class="popup-content">
+        <h3>Reset Bingo Board?</h3>
+        <p>This will erase your current progress and start a new game.</p>
+        <div class="popup-buttons">
+        <button onclick="confirmReset()" class="popup-confirm">Yes, reset</button>
+        <button onclick="closePopup()" class="popup-cancel">Cancel</button>
+        </div>
+    </div>
+    </div>
+    <button onclick="openPopup()" class="reset-button">Generate new Bingo Board</button>
 </body>
 </html>
