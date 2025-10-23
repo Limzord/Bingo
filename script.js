@@ -127,11 +127,11 @@ function loadCookieData() {
 function getCookieExpiryDate() {
     const date = new Date();
 
-    if (date.getHours() >= 7) {
+    if (date.getHours() >= 9) {
         date.setDate(date.getDate() + 1);
     }
 
-    date.setHours(7, 0, 0, 0);
+    date.setHours(9, 0, 0, 0);
 
     return date.toUTCString();
 }
@@ -444,7 +444,6 @@ async function loadProgress() {
     const user = getLoggedInUser();  
 
     if (user) {
-        // Logged in: load from server
         try {
             const response = await fetch("/load_progress.php", {
                 method: "GET",
