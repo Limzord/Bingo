@@ -5,10 +5,10 @@ const Save = Object.freeze({
 })
 function fillBingoBoard(force = false) {
     if (!force && loadProgress()) {
-        console.log("Loaded board from cookie!");
+        // console.log("Loaded board from cookie / account!");
         return;
     }
-    console.log(force ? "Forcing new board..." : "No cookie found, generating new board...");
+    console.log(force ? "Forcing new board..." : "No save data found, generating new board...");
     fetch("./bingo.json")
     .then(response => response.json())
     .then(data => {
