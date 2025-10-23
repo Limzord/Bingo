@@ -13,6 +13,8 @@ function fillBingoBoard(force = false) {
     .then(response => response.json())
     .then(data => {
         var elements = { "values":{}, "progress":{} }
+        elements["values"]["free"] = data.free[Math.floor(Math.random() * data.free.length)];
+        elements["progress"]["free"] = "false";
         for (let i = 1; i <= 24; i++) {
             let randomElement;
             do {
@@ -21,11 +23,6 @@ function fillBingoBoard(force = false) {
             elements["values"][i] = randomElement;
             elements["progress"][i] = "false";
         }
-        elements["values"]["free"] = data.free;
-        elements["progress"]["free"] = "false";
-
-        console.log(elements);
-
         updateBoardFromJSON(elements);
         saveProgress(Save.VALUES);
     });
