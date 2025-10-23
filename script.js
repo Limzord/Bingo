@@ -12,22 +12,22 @@ function fillBingoBoard(force = false) {
     fetch("./bingo.json")
     .then(response => response.json())
     .then(data => {
-        var usedElements = []
-        for (i = 1; i <= 24; i++) {
+        var elements = { "values":{}, "progress":{} }
+        for (let i = 1; i <= 24; i++) {
             let randomElement;
             do {
             randomElement = data.values[Math.floor(Math.random() * data.values.length)];
-            } while (usedElements.includes(randomElement));
-            usedElements.push(randomElement);
-            document.getElementById('bingo-'+i).innerHTML = `<div class="cell-wrapper"><span class="cell-text">${randomElement}</span></div>`;
-            document.getElementById('bingo-'+i).setAttribute("data-clicked", "false");
-
-
+            } while (Object.values(elements["values"]).includes(randomElement));
+            elements["values"][i] = randomElement;
+            elements["progress"][i] = "false";
         }
-        document.getElementById('bingo-free').innerHTML = `<div class="cell-wrapper"><span class="cell-text">${data.free}</span></div>`;
-        document.getElementById('bingo-free').setAttribute("data-clicked", "false");
-        shrinkTextToFit();
-        setTimeout(() => saveProgress(Save.VALUES), 0);;
+        elements["values"]["free"] = data.free;
+        elements["progress"]["free"] = "false";
+
+        console.log(elements);
+
+        updateBoardFromJSON(elements);
+        saveProgress(Save.VALUES);
     });
 }
 function clickElement(number) {
@@ -112,7 +112,7 @@ function getProgressToSave() {
 
 function loadFromCookie() {
     const data = loadCookieData();
-    if (applyBoardData(data))
+    if (updateBoardFromJSON(data))
         return true;
     return false;
 }
@@ -423,14 +423,12 @@ async function syncCookieToServerIfNeeded() {
         const data = await resp.json();
 
         if (data.success === false) {
-            // No server save yet → push cookie
             const cookieData = loadCookieData();
             if (cookieData) {
-                await saveProgress(Save.BOTH);  // uploads both values + progress
+                await saveProgress(Save.BOTH);
             }
         } else {
-            // Server has save → overwrite board
-            applyBoardData(data.data);
+            updateBoardFromJSON(data.data);
         }
     } catch (err) {
         console.error("Failed to sync cookie to server:", err);
@@ -453,7 +451,7 @@ async function loadProgress() {
                 return false;
             }
 
-            applyBoardData(result.data);
+            updateBoardFromJSON(result.data);
             return true;
 
         } catch (err) {
@@ -466,14 +464,13 @@ async function loadProgress() {
     }
 }
 
-function applyBoardData(data) {
+function updateBoardFromJSON(data) {
     if (!data) return false;
 
     if (data.values) {
         for (let i = 1; i <= 24; i++) {
-            const text = data.values[i];
             document.getElementById('bingo-' + i).innerHTML =
-                `<div class="cell-wrapper"><span class="cell-text">${text}</span></div>`;
+                `<div class="cell-wrapper"><span class="cell-text">${data.values[i]}</span></div>`;
         }
         if (data.values.free) {
             document.getElementById('bingo-free').innerHTML =
