@@ -3,29 +3,19 @@ const Save = Object.freeze({
     PROGRESS: 1,
     BOTH: 2
 })
-function fillBingoBoard(force = false) {
+async function fillBingoBoard(force = false) {
     if (!force && loadProgress()) {
-        console.log("Loaded board from cookie!");
+        // console.log("Loaded board from cookie / account!");
         return;
     }
-    console.log(force ? "Forcing new board..." : "No cookie found, generating new board...");
-    fetch("./bingo.json")
-    .then(response => response.json())
-    .then(data => {
-        var elements = { "values":{}, "progress":{} }
-        elements["values"]["free"] = data.free[Math.floor(Math.random() * data.free.length)];
-        elements["progress"]["free"] = "false";
-        for (let i = 1; i <= 24; i++) {
-            let randomElement;
-            do {
-            randomElement = data.values[Math.floor(Math.random() * data.values.length)];
-            } while (Object.values(elements["values"]).includes(randomElement));
-            elements["values"][i] = randomElement;
-            elements["progress"][i] = "false";
-        }
-        updateBoardFromJSON(elements);
-        saveProgress(Save.VALUES);
-    });
+    console.log(force ? "Forcing new board..." : "No save data found, generating new board...");
+
+    const response = await fetch("/bingo/generate_board.php", { credentials: "include" });
+    console.log(response);
+    const elements = await response.json();
+
+    updateBoardFromJSON(elements);
+    saveProgress(Save.VALUES);
 }
 function clickElement(cell) {
     cell.setAttribute("data-clicked", !checkClicked(cell));
@@ -38,38 +28,42 @@ function checkClicked(cell) {
         return true;
     return false;
 }
+function checkClickedFromId(number) {
+    const cell = document.getElementById('bingo-' + number);
+    return checkClicked(cell);
+}
 function checkWin() {
     if (checkWinHorizontal() || checkWinVertical() || checkWinDiagonal())
         return true;
 }
 function checkWinHorizontal() {
-    if (checkClicked(1) && checkClicked(2) && checkClicked(3) && checkClicked(4) && checkClicked(5))
+    if (checkClickedFromId(1) && checkClickedFromId(2) && checkClickedFromId(3) && checkClickedFromId(4) && checkClickedFromId(5))
         return true;
-    else if (checkClicked(6) && checkClicked(7) && checkClicked(8) && checkClicked(9) && checkClicked(10))
+    else if (checkClickedFromId(6) && checkClickedFromId(7) && checkClickedFromId(8) && checkClickedFromId(9) && checkClickedFromId(10))
         return true;
-    else if (checkClicked(11) && checkClicked(12) && checkClicked("free") && checkClicked(13) && checkClicked(14))
+    else if (checkClickedFromId(11) && checkClickedFromId(12) && checkClickedFromId("free") && checkClickedFromId(13) && checkClickedFromId(14))
         return true;
-    else if (checkClicked(15) && checkClicked(16) && checkClicked(17) && checkClicked(18) && checkClicked(19))
+    else if (checkClickedFromId(15) && checkClickedFromId(16) && checkClickedFromId(17) && checkClickedFromId(18) && checkClickedFromId(19))
         return true;
-    else if (checkClicked(20) && checkClicked(21) && checkClicked(22) && checkClicked(23) && checkClicked(24))
+    else if (checkClickedFromId(20) && checkClickedFromId(21) && checkClickedFromId(22) && checkClickedFromId(23) && checkClickedFromId(24))
         return true;
 }
 function checkWinVertical() {
-    if (checkClicked(1) && checkClicked(6) && checkClicked(11) && checkClicked(15) && checkClicked(20))
+    if (checkClickedFromId(1) && checkClickedFromId(6) && checkClickedFromId(11) && checkClickedFromId(15) && checkClickedFromId(20))
         return true;
-    else if (checkClicked(2) && checkClicked(7) && checkClicked(12) && checkClicked(16) && checkClicked(21))
+    else if (checkClickedFromId(2) && checkClickedFromId(7) && checkClickedFromId(12) && checkClickedFromId(16) && checkClickedFromId(21))
         return true;
-    else if (checkClicked(3) && checkClicked(8) && checkClicked("free") && checkClicked(17) && checkClicked(22))
+    else if (checkClickedFromId(3) && checkClickedFromId(8) && checkClickedFromId("free") && checkClickedFromId(17) && checkClickedFromId(22))
         return true;
-    else if (checkClicked(4) && checkClicked(9) && checkClicked(13) && checkClicked(18) && checkClicked(23))
+    else if (checkClickedFromId(4) && checkClickedFromId(9) && checkClickedFromId(13) && checkClickedFromId(18) && checkClickedFromId(23))
         return true;
-    else if (checkClicked(5) && checkClicked(10) && checkClicked(14) && checkClicked(19) && checkClicked(24))
+    else if (checkClickedFromId(5) && checkClickedFromId(10) && checkClickedFromId(14) && checkClickedFromId(19) && checkClickedFromId(24))
         return true;
 }
 function checkWinDiagonal() {
-    if (checkClicked(1) && checkClicked(7) && checkClicked("free") && checkClicked(18) && checkClicked(24))
+    if (checkClickedFromId(1) && checkClickedFromId(7) && checkClickedFromId("free") && checkClickedFromId(18) && checkClickedFromId(24))
         return true;
-    else if (checkClicked(5) && checkClicked(9) && checkClicked("free") && checkClicked(16) && checkClicked(20))
+    else if (checkClickedFromId(5) && checkClickedFromId(9) && checkClickedFromId("free") && checkClickedFromId(16) && checkClickedFromId(20))
         return true;
 }
 
@@ -99,9 +93,9 @@ function getValuesToSave() {
 
 function getProgressToSave() {
     const progress = {};
-    progress["free"] = checkClicked("free") ? "true" : "false";
+    progress["free"] = checkClickedFromId("free") ? "true" : "false";
     for (let i = 1; i <= 24; i++) {
-        progress[i] = checkClicked(i) ? "true" : "false";
+        progress[i] = checkClickedFromId(i) ? "true" : "false";
     }
     return progress;
 }
@@ -127,11 +121,11 @@ function loadCookieData() {
 function getCookieExpiryDate() {
     const date = new Date();
 
-    if (date.getHours() >= 7) {
+    if (date.getHours() >= 9) {
         date.setDate(date.getDate() + 1);
     }
 
-    date.setHours(7, 0, 0, 0);
+    date.setHours(9, 0, 0, 0);
 
     return date.toUTCString();
 }
@@ -144,9 +138,8 @@ async function resetBingoBoard() {
 
     if (user) {
         try {
-            const response = await fetch("/reset_progress.php", {
+            const response = await fetch("/bingo/reset_progress.php", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 credentials: "include"
             });
             const result = await response.json();
@@ -155,8 +148,7 @@ async function resetBingoBoard() {
             console.error("Error resetting progress:", err);
         }
     }
-    
-    // clear current board visually (optional)
+
     for (let i = 1; i <= 24; i++) {
         const cell = document.getElementById('bingo-' + i);
         if (cell) {
@@ -170,7 +162,6 @@ async function resetBingoBoard() {
         free.removeAttribute("data-clicked");
     }
 
-    // Show overlay again
     showOverlay();
 }
 
@@ -266,7 +257,6 @@ async function login() {
     try {
         const response = await fetch("/login.php", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
             credentials: "include",
             body: JSON.stringify({ username, password })
         });
@@ -274,7 +264,6 @@ async function login() {
         const data = await response.json();
 
         if (data.success) {
-            // store the display name from /etc/passwd
             localStorage.setItem("loggedInUser", data.user);
             updateLoginUI();
 
@@ -282,10 +271,8 @@ async function login() {
 
             await syncCookieToServerIfNeeded();
         } else {
-            // failed login: clear input and optionally show message
             usernameInput.value = "";
             passwordInput.value = "";
-            // alert(data.message || "Login failed");
         }
     } catch (err) {
         console.error("Login error:", err);
@@ -307,7 +294,7 @@ window.addEventListener("load", () => {
 
 async function logout() {
   try {
-    await fetch("https://tmmd.club/logout.php", {
+    await fetch("/logout.php", {
       method: "POST",
       credentials: "include"
     });
@@ -329,10 +316,10 @@ function register() {
 
 async function checkSession() {
     try {
-        const res = await fetch("/refresh_session.php", {
+        const response = await fetch("/refresh_session.php", {
             credentials: "include"
         });
-        const data = await res.json();
+        const data = await response.json();
 
         if (data.logged_in) {
             localStorage.setItem("loggedInUser", data.user);
@@ -409,9 +396,8 @@ async function saveProgress(type = Save.BOTH) {
 
     if (user) {
         try {
-            const response = await fetch("/save_progress.php", {
+            const response = await fetch("/bingo/save_progress.php", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 credentials: "include",
                 body: JSON.stringify(data)
             });
@@ -421,10 +407,8 @@ async function saveProgress(type = Save.BOTH) {
             console.error("Error saving progress:", err);
         }
 
-        // Clear old cookie once server save succeeds
         document.cookie = "bingoData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     } else {
-        // Not logged in: fallback to cookie
         saveToCookie(type);
     }
 }
@@ -434,8 +418,8 @@ async function syncCookieToServerIfNeeded() {
     if (!user) return;
 
     try {
-        const resp = await fetch("/load_progress.php", { credentials: "include" });
-        const data = await resp.json();
+        const response = await fetch("/bingo/load_progress.php", { credentials: "include" });
+        const data = await response.json();
 
         if (data.success === false) {
             const cookieData = loadCookieData();
@@ -454,9 +438,8 @@ async function loadProgress() {
     const user = getLoggedInUser();  
 
     if (user) {
-        // Logged in: load from server
         try {
-            const response = await fetch("/load_progress.php", {
+            const response = await fetch("/bingo/load_progress.php", {
                 method: "GET",
                 credentials: "include"
             });
@@ -474,7 +457,6 @@ async function loadProgress() {
             return false;
         }
     } else {
-        // Not logged in: load from cookie
         return loadFromCookie();
     }
 }
