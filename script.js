@@ -31,13 +31,13 @@ function fillBingoBoard(force = false) {
     });
 }
 function clickElement(cell) {
-    cell.setAttribute("data-clicked", !checkClicked(number));
+    cell.setAttribute("data-clicked", !checkClicked(cell));
     saveProgress(Save.BOTH);
 
     if (checkWin()) showWinScreen();
 }
-function checkClicked(number) {
-    if (document.getElementById('bingo-'+number).getAttribute("data-clicked") == "true")
+function checkClicked(cell) {
+    if (cell.getAttribute("data-clicked") == "true")
         return true;
     return false;
 }
