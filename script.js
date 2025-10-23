@@ -406,7 +406,7 @@ async function saveProgress(type = Save.BOTH) {
 
     if (user) {
         try {
-            const response = await fetch("/save_progress.php", {
+            const response = await fetch("/bingo/save_progress.php", {
                 method: "POST",
                 credentials: "include",
                 body: JSON.stringify(data)
