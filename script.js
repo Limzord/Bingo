@@ -148,7 +148,7 @@ async function resetBingoBoard() {
 
     if (user) {
         try {
-            const response = await fetch("/reset_progress.php", {
+            const response = await fetch("/bingo/reset_progress.php", {
                 method: "POST",
                 credentials: "include"
             });
