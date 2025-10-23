@@ -30,8 +30,7 @@ function fillBingoBoard(force = false) {
         saveProgress(Save.VALUES);
     });
 }
-function clickElement(number) {
-    const cell = document.getElementById('bingo-' + number);
+function clickElement(cell) {
     cell.setAttribute("data-clicked", !checkClicked(number));
     saveProgress(Save.BOTH);
 
