@@ -3,29 +3,19 @@ const Save = Object.freeze({
     PROGRESS: 1,
     BOTH: 2
 })
-function fillBingoBoard(force = false) {
+async function fillBingoBoard(force = false) {
     if (!force && loadProgress()) {
         // console.log("Loaded board from cookie / account!");
         return;
     }
     console.log(force ? "Forcing new board..." : "No save data found, generating new board...");
-    fetch("./bingo.json")
-    .then(response => response.json())
-    .then(data => {
-        var elements = { "values":{}, "progress":{} }
-        elements["values"]["free"] = data.free[Math.floor(Math.random() * data.free.length)];
-        elements["progress"]["free"] = "false";
-        for (let i = 1; i <= 24; i++) {
-            let randomElement;
-            do {
-            randomElement = data.values[Math.floor(Math.random() * data.values.length)];
-            } while (Object.values(elements["values"]).includes(randomElement));
-            elements["values"][i] = randomElement;
-            elements["progress"][i] = "false";
-        }
-        updateBoardFromJSON(elements);
-        saveProgress(Save.VALUES);
-    });
+
+    const response = await fetch("/bingo/generate_board.php", { credentials: "include" });
+    console.log(response);
+    const elements = await response.json();
+
+    updateBoardFromJSON(elements);
+    saveProgress(Save.VALUES);
 }
 function clickElement(cell) {
     cell.setAttribute("data-clicked", !checkClicked(cell));
