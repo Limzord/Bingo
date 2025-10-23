@@ -1,5 +1,9 @@
 {
-    "free": "kill",
+    "free": [
+        "kill",
+        "poop",
+        "poeep"
+    ],
     "values": [
         "lucr1",
         "lucr2",
