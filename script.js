@@ -327,6 +327,25 @@ function register() {
     window.location.href = "https://support.mail.tmmd.club";
 }
 
+async function checkSession() {
+    try {
+        const res = await fetch("/refresh_session.php", {
+            credentials: "include"
+        });
+        const data = await res.json();
+
+        if (data.logged_in) {
+            localStorage.setItem("loggedInUser", data.user);
+        } else {
+            localStorage.removeItem("loggedInUser");
+        }
+
+        updateLoginUI();
+    } catch (err) {
+        console.error("Session check failed:", err);
+    }
+}
+
 function updateLoginUI() {
     const loginArea = document.getElementById("login-area");
     const user = localStorage.getItem("loggedInUser");
@@ -367,10 +386,10 @@ function toggleHamburgerMenu(icon) {
 window.addEventListener("load", updateLoginUI);
 
 window.addEventListener("DOMContentLoaded", async () => {
-    // always generate board first
-    await fillBingoBoard(false); // false = don't force new, will use cookie if available
+    await checkSession();
+    fillBingoBoard(false);
 
-    const loaded = await loadProgress(); // now board exists
+    const loaded = await loadProgress();
     if (loaded) {
         hideOverlay();
     } else {
