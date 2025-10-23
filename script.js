@@ -146,7 +146,6 @@ async function resetBingoBoard() {
         try {
             const response = await fetch("/reset_progress.php", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 credentials: "include"
             });
             const result = await response.json();
@@ -155,8 +154,7 @@ async function resetBingoBoard() {
             console.error("Error resetting progress:", err);
         }
     }
-    
-    // clear current board visually (optional)
+
     for (let i = 1; i <= 24; i++) {
         const cell = document.getElementById('bingo-' + i);
         if (cell) {
@@ -170,7 +168,6 @@ async function resetBingoBoard() {
         free.removeAttribute("data-clicked");
     }
 
-    // Show overlay again
     showOverlay();
 }
 
@@ -266,7 +263,6 @@ async function login() {
     try {
         const response = await fetch("/login.php", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
             credentials: "include",
             body: JSON.stringify({ username, password })
         });
@@ -274,7 +270,6 @@ async function login() {
         const data = await response.json();
 
         if (data.success) {
-            // store the display name from /etc/passwd
             localStorage.setItem("loggedInUser", data.user);
             updateLoginUI();
 
@@ -282,10 +277,8 @@ async function login() {
 
             await syncCookieToServerIfNeeded();
         } else {
-            // failed login: clear input and optionally show message
             usernameInput.value = "";
             passwordInput.value = "";
-            // alert(data.message || "Login failed");
         }
     } catch (err) {
         console.error("Login error:", err);
@@ -307,7 +300,7 @@ window.addEventListener("load", () => {
 
 async function logout() {
   try {
-    await fetch("https://tmmd.club/logout.php", {
+    await fetch("/logout.php", {
       method: "POST",
       credentials: "include"
     });
@@ -329,10 +322,10 @@ function register() {
 
 async function checkSession() {
     try {
-        const res = await fetch("/refresh_session.php", {
+        const response = await fetch("/refresh_session.php", {
             credentials: "include"
         });
-        const data = await res.json();
+        const data = await response.json();
 
         if (data.logged_in) {
             localStorage.setItem("loggedInUser", data.user);
@@ -411,7 +404,6 @@ async function saveProgress(type = Save.BOTH) {
         try {
             const response = await fetch("/save_progress.php", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 credentials: "include",
                 body: JSON.stringify(data)
             });
@@ -421,10 +413,8 @@ async function saveProgress(type = Save.BOTH) {
             console.error("Error saving progress:", err);
         }
 
-        // Clear old cookie once server save succeeds
         document.cookie = "bingoData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     } else {
-        // Not logged in: fallback to cookie
         saveToCookie(type);
     }
 }
@@ -434,8 +424,8 @@ async function syncCookieToServerIfNeeded() {
     if (!user) return;
 
     try {
-        const resp = await fetch("/load_progress.php", { credentials: "include" });
-        const data = await resp.json();
+        const response = await fetch("/load_progress.php", { credentials: "include" });
+        const data = await response.json();
 
         if (data.success === false) {
             const cookieData = loadCookieData();
@@ -474,7 +464,6 @@ async function loadProgress() {
             return false;
         }
     } else {
-        // Not logged in: load from cookie
         return loadFromCookie();
     }
 }
