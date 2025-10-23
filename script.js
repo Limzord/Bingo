@@ -428,7 +428,7 @@ async function syncCookieToServerIfNeeded() {
     if (!user) return;
 
     try {
-        const response = await fetch("/load_progress.php", { credentials: "include" });
+        const response = await fetch("/bingo/load_progress.php", { credentials: "include" });
         const data = await response.json();
 
         if (data.success === false) {
@@ -449,7 +449,7 @@ async function loadProgress() {
 
     if (user) {
         try {
-            const response = await fetch("/load_progress.php", {
+            const response = await fetch("/bingo/load_progress.php", {
                 method: "GET",
                 credentials: "include"
             });
