@@ -32,4 +32,14 @@ function saveFile($filename, $data) {
         return json_encode(['success' => false, 'message' => 'Failed to write save file']);
     }
 }
+
+function deleteFile($filename) {
+    $dir = __DIR__ . "/saves";
+    $fileLocation = "$dir/$filename";
+    if (unlink($fileLocation)) {
+        return json_encode(['success' => true, 'message' => 'Successfully deleted save data']);
+    } else {
+        return json_encode(['success' => false, 'message' => 'Failed to delete save data']);
+    }
+}
 ?>
