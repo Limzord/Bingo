@@ -1,5 +1,5 @@
 <?php
-function getFileName($session, $sessionId) {
+function getFilename($session, $sessionId) {
     if (isset($session['unix_user'])) {
         $unixUser = $session['unix_user'];
         $filename = "{$unixUser}.json";

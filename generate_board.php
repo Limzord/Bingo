@@ -21,7 +21,7 @@ $elementsEncoded = json_encode($elements);
 
 require 'file_operations.php';
 
-$filename = getFileName($_SESSION, session_id());
+$filename = getFilename($_SESSION, session_id());
 
 saveFile($filename, $elementsEncoded);
 
