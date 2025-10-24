@@ -34,35 +34,39 @@ function checkWin() {
     if (checkWinHorizontal() || checkWinVertical() || checkWinDiagonal())
         return true;
 }
+function checkIfArrayIsClicked(selection) {
+    let result = true;
+    selection.forEach(element => {
+        if (!checkClickedFromId(element)) result = false;
+    });
+    return result;
+}
 function checkWinHorizontal() {
-    if (checkClickedFromId(1) && checkClickedFromId(2) && checkClickedFromId(3) && checkClickedFromId(4) && checkClickedFromId(5))
+    let row1 = [1,2,3,4,5];
+    let row2 = [6,7,8,9,10];
+    let row3 = [11,12,"free",13,14];
+    let row4 = [15,16,17,18,19];
+    let row5 = [20,21,22,23,24];
+    if(checkIfArrayIsClicked(row1) || checkIfArrayIsClicked(row2) || checkIfArrayIsClicked(row3) || checkIfArrayIsClicked(row4) || checkIfArrayIsClicked(row5))
         return true;
-    else if (checkClickedFromId(6) && checkClickedFromId(7) && checkClickedFromId(8) && checkClickedFromId(9) && checkClickedFromId(10))
-        return true;
-    else if (checkClickedFromId(11) && checkClickedFromId(12) && checkClickedFromId("free") && checkClickedFromId(13) && checkClickedFromId(14))
-        return true;
-    else if (checkClickedFromId(15) && checkClickedFromId(16) && checkClickedFromId(17) && checkClickedFromId(18) && checkClickedFromId(19))
-        return true;
-    else if (checkClickedFromId(20) && checkClickedFromId(21) && checkClickedFromId(22) && checkClickedFromId(23) && checkClickedFromId(24))
-        return true;
+    return false;
 }
 function checkWinVertical() {
-    if (checkClickedFromId(1) && checkClickedFromId(6) && checkClickedFromId(11) && checkClickedFromId(15) && checkClickedFromId(20))
+    let column1 = [1,6,11,15,20];
+    let column2 = [2,7,12,16,21];
+    let column3 = [3,8,"free",17,22];
+    let column4 = [4,9,13,18,23];
+    let column5 = [5,10,14,19,24];
+    if(checkIfArrayIsClicked(column1) || checkIfArrayIsClicked(column2) || checkIfArrayIsClicked(column3) || checkIfArrayIsClicked(column4) || checkIfArrayIsClicked(column5))
         return true;
-    else if (checkClickedFromId(2) && checkClickedFromId(7) && checkClickedFromId(12) && checkClickedFromId(16) && checkClickedFromId(21))
-        return true;
-    else if (checkClickedFromId(3) && checkClickedFromId(8) && checkClickedFromId("free") && checkClickedFromId(17) && checkClickedFromId(22))
-        return true;
-    else if (checkClickedFromId(4) && checkClickedFromId(9) && checkClickedFromId(13) && checkClickedFromId(18) && checkClickedFromId(23))
-        return true;
-    else if (checkClickedFromId(5) && checkClickedFromId(10) && checkClickedFromId(14) && checkClickedFromId(19) && checkClickedFromId(24))
-        return true;
+    return false;
 }
 function checkWinDiagonal() {
-    if (checkClickedFromId(1) && checkClickedFromId(7) && checkClickedFromId("free") && checkClickedFromId(18) && checkClickedFromId(24))
+    let diagonal1 = [1,7,"free",18,24];
+    let diagonal2 = [5,9,"free",16,20];
+    if (checkIfArrayIsClicked(diagonal1) || checkIfArrayIsClicked(diagonal2))
         return true;
-    else if (checkClickedFromId(5) && checkClickedFromId(9) && checkClickedFromId("free") && checkClickedFromId(16) && checkClickedFromId(20))
-        return true;
+    return false;
 }
 
 function getProgressToSave() {
