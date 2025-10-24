@@ -1,32 +1,6 @@
 <?php
-$session_lifetime = 7 * 24 * 60 * 60;
-session_name('PHPSESSID');
-session_set_cookie_params([
-    'lifetime' => $session_lifetime,
-    'path' => '/',
-    'domain' => '.tmmd.club',
-    'secure' => true,
-    'httponly' => true,
-    'samesite' => 'Lax'
-]);
-session_start();
 
-if (isset($_COOKIE[session_name()])) {
-    setcookie(
-        session_name(),
-        $_COOKIE[session_name()],
-        [
-            'expires' => time() + $session_lifetime,
-            'path' => '/',
-            'domain' => '.tmmd.club',
-            'secure' => true,
-            'httponly' => true,
-            'samesite' => 'Lax'
-        ]
-    );
-}
-
-header('Content-Type: application/json');
+require_once 'session_manager.php';
 
 $possibleBingoSpaces = json_decode(file_get_contents(__DIR__ . '/bingo.json'), true);
 
