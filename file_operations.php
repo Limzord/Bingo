@@ -55,4 +55,25 @@ function deleteFile($filename) {
         return json_encode(['success' => false, 'message' => 'Failed to delete save data']);
     }
 }
+
+function moveFile($sourceFile, $destinationFile) {
+    $directory = getDirectory();
+    $sourceFileLocation = "$directory/$sourcefilename";
+    $destinationFileLocation = "$directory/$sourceFilename";
+
+    if (!file_exists($sourceFileLocation)) {
+        return json_encode(["success" => false, "message" => "There is no guest save to move"]);
+    }
+
+    if (file_exists($destinationFileLocation)) {
+        return json_encode(["success" => false, "message" => "User already has a save file"]);
+    }
+
+    if (rename($sourceFileLocation,$destinationFileLocation)) {
+        return json_encode(["success" => true]);
+    } else {
+        return json_encode(["success" => false, "message" => "Couldn't move save file to user"]);
+    }
+}
+
 ?>
