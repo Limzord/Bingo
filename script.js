@@ -219,7 +219,9 @@ async function login() {
 
             hideOverlay();
 
-            await syncCookieToServerIfNeeded();
+            if (!await syncGuestSaveToUserIfNeeded()) {
+                loadProgress();
+            }
         } else {
             usernameInput.value = "";
             passwordInput.value = "";
@@ -362,25 +364,23 @@ async function saveToServer(type = Save.PROGRESS) {
     }
 }
 
-async function syncCookieToServerIfNeeded() {
+async function syncGuestSaveToUserIfNeeded() {
     const user = getLoggedInUser();
     if (!user) return;
 
     try {
-        const response = await fetch("/bingo/load_progress.php", { credentials: "include" });
-        const data = await response.json();
+        const response = await fetch("/bingo/move_guest_save_to_user.php", { credentials: "include" });
+        const result = await response.json();
 
-        if (data.success === false) {
-            const cookieData = loadCookieData();
-            if (cookieData) {
-                await saveProgress(Save.BOTH);
-            }
-        } else {
-            updateBoardFromJSON(data.data);
+        if (result.success === false) {
+            console.log("Failed to move guest save to user: ", result.message);
+            return false;
         }
+        return true;
     } catch (err) {
-        console.error("Failed to sync cookie to server:", err);
+        console.error("Failed to move guest save to user:", err);
     }
+    return false;
 }
 
 async function loadProgress() {
