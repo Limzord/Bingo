@@ -9,9 +9,13 @@ function getFilename($session, $sessionId) {
     return $filename;
 }
 
+function getDirectory() {
+    return __DIR__ . "/saves";
+}
+
 function loadFile($filename) {
-    $dir = __DIR__ . "/saves";
-    $fileLocation = "$dir/$filename";
+    $directory = getDirectory();
+    $fileLocation = "$directory/$filename";
 
     if (!file_exists($fileLocation)) {
         return null;
@@ -22,9 +26,9 @@ function loadFile($filename) {
 }
 
 function saveFile($filename, $data) {
-    $dir = __DIR__ . "/saves";
-    if (!is_dir($dir)) mkdir($dir, 0700, true);
-    $fileLocation = "$dir/$filename";
+    $directory = getDirectory();
+    if (!is_dir($directory)) mkdir($directory, 0700, true);
+    $fileLocation = "$directory/$filename";
 
     if (file_put_contents($fileLocation, $data)) {
         return json_encode(['success' => true]);
@@ -34,8 +38,9 @@ function saveFile($filename, $data) {
 }
 
 function deleteFile($filename) {
-    $dir = __DIR__ . "/saves";
-    $fileLocation = "$dir/$filename";
+    $directory = getDirectory();
+    $fileLocation = "$directory/$filename";
+
     if (unlink($fileLocation)) {
         return json_encode(['success' => true, 'message' => 'Successfully deleted save data']);
     } else {
