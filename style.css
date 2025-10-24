@@ -10,7 +10,7 @@ html body {
     overflow: hidden;
 }
 
-/* Navigation area start */
+/* Navigation bar */
 .navbar {
     width: 100%;
     height: min(8vh,100vw/4*3/100*8);
