@@ -374,8 +374,8 @@ async function syncGuestSaveToUserIfNeeded() {
 
 async function loadProgress() {
     try {
-        const result = await getUserData();
-        if (!result.success) {
+        const result = await getSaveData();
+        if (!result || !result.success) {
             return false;
         }
 
@@ -388,7 +388,7 @@ async function loadProgress() {
     }
 }
 
-async function getUserData() {
+async function getSaveData() {
     const response = await fetch("/bingo/load_progress.php", {
         method: "GET",
         credentials: "include"
