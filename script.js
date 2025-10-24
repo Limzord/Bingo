@@ -398,7 +398,9 @@ async function saveProgress(type = Save.PROGRESS) {
 
 async function saveToUser(type = Save.PROGRESS, user) {
     let existing = await getUserData() || {};
-    debugger;
+    if (existing.data) {
+        existing = existing.data;
+    }
     if (type === Save.VALUES || type === Save.BOTH) existing.values = getValuesToSave();
     if (type === Save.PROGRESS || type === Save.BOTH) existing.progress = getProgressToSave();
 
