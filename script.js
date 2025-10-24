@@ -14,11 +14,10 @@ async function fillBingoBoard(force = false) {
     const elements = await response.json();
 
     updateBoardFromJSON(elements);
-    saveProgress(Save.VALUES);
 }
 function clickElement(cell) {
     cell.setAttribute("data-clicked", !checkClicked(cell));
-    saveProgress(Save.PROGRESS);
+    saveToServer();
 
     if (checkWin()) showWinScreen();
 }
@@ -64,15 +63,6 @@ function checkWinDiagonal() {
         return true;
     else if (checkClickedFromId(5) && checkClickedFromId(9) && checkClickedFromId("free") && checkClickedFromId(16) && checkClickedFromId(20))
         return true;
-}
-
-function getValuesToSave() {
-    const values = {};
-    values["free"] = document.querySelector('#bingo-free .cell-text').textContent;
-    for (let i = 1; i <= 24; i++) {
-        values[i] = document.querySelector(`#bingo-${i} .cell-text`).textContent;
-    }
-    return values;
 }
 
 function getProgressToSave() {
@@ -348,23 +338,13 @@ window.addEventListener("DOMContentLoaded", async () => {
 });
 window.addEventListener("resize", shrinkTextToFit);
 
-async function saveProgress(type = Save.PROGRESS) {
-    saveToServer(type);
-}
-
-async function saveToServer(type = Save.PROGRESS) {
-    let existing = await getUserData() || {};
-    if (existing.data) {
-        existing = existing.data;
-    }
-    if (type === Save.VALUES || type === Save.BOTH) existing.values = getValuesToSave();
-    if (type === Save.PROGRESS || type === Save.BOTH) existing.progress = getProgressToSave();
-
+async function saveToServer() {
+    data.progress = getProgressToSave();
     try {
         const response = await fetch("/bingo/save_progress.php", {
             method: "POST",
             credentials: "include",
-            body: JSON.stringify(existing)
+            body: JSON.stringify(data)
         });
         const result = await response.json();
         if (!result.success) console.error("Failed to save progress:", result.message);

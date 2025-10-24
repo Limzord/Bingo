@@ -16,6 +16,15 @@ for ($i = 1; $i <= 24; $i++) {
     $elements['progress'][$i] = 'false';
 }
 
-echo json_encode($elements);
+
+$elementsEncoded = json_encode($elements);
+
+require 'file_operations.php';
+
+$filename = getFileName($_SESSION, session_id());
+
+saveFile($filename, $elementsEncoded);
+
+echo $elementsEncoded;
 
 ?>
