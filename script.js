@@ -253,7 +253,16 @@ async function logout() {
 
     localStorage.removeItem("loggedInUser");
 
-    resetBingoBoard();
+    clearBingoBoardVisually();
+
+    const loaded = await loadProgress();
+    if (loaded) {
+        hideOverlay();
+    } else {
+        showOverlay();
+    }
+
+    shrinkTextToFit();
 
     updateLoginUI();
   } catch (err) {
