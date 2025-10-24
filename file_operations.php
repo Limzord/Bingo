@@ -1,12 +1,20 @@
 <?php
 function getFilename($session, $sessionId) {
     if (isset($session['unix_user'])) {
-        $unixUser = $session['unix_user'];
-        $filename = "{$unixUser}.json";
+        $filename = getUserFilename($session);
     } else {
-        $filename = "guest_{$sessionId}.json";
+        $filename = getGuestFilename($sessionId);
     }
     return $filename;
+}
+
+function getUserFilename($session) {
+    $unixUser = $session['unix_user'];
+    return "{$unixUser}.json";
+}
+
+function getGuestFilename($sessionId) {
+    return "guest_{$sessionId}.json";
 }
 
 function getDirectory() {
