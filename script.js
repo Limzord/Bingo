@@ -388,27 +388,30 @@ window.addEventListener("resize", shrinkTextToFit);
 
 async function saveProgress(type = Save.PROGRESS) {
     const user = localStorage.getItem("loggedInUser");
-
-    const data = {};
-    if (type === Save.VALUES || type === Save.BOTH) data.values = getValuesToSave();
-    if (type === Save.PROGRESS || type === Save.BOTH) data.progress = getProgressToSave();
-
+    
     if (user) {
-        try {
-            const response = await fetch("/bingo/save_progress.php", {
-                method: "POST",
-                credentials: "include",
-                body: JSON.stringify(data)
-            });
-            const result = await response.json();
-            if (!result.success) console.error("Failed to save progress:", result.message);
-        } catch (err) {
-            console.error("Error saving progress:", err);
-        }
-
-        document.cookie = "bingoData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        saveToUser(type, user);
     } else {
         saveToCookie(type);
+    }
+}
+
+async function saveToUser(type = Save.PROGRESS, user) {
+    let existing = await getUserData() || {};
+    debugger;
+    if (type === Save.VALUES || type === Save.BOTH) existing.values = getValuesToSave();
+    if (type === Save.PROGRESS || type === Save.BOTH) existing.progress = getProgressToSave();
+
+    try {
+        const response = await fetch("/bingo/save_progress.php", {
+            method: "POST",
+            credentials: "include",
+            body: JSON.stringify(existing)
+        });
+        const result = await response.json();
+        if (!result.success) console.error("Failed to save progress:", result.message);
+    } catch (err) {
+        console.error("Error saving progress:", err);
     }
 }
 
@@ -438,13 +441,8 @@ async function loadProgress() {
 
     if (user) {
         try {
-            const response = await fetch("/bingo/load_progress.php", {
-                method: "GET",
-                credentials: "include"
-            });
-            const result = await response.json();
+            const result = await getUserData();
             if (!result.success) {
-                console.log("No save for this user yet");
                 return false;
             }
 
@@ -458,6 +456,19 @@ async function loadProgress() {
     } else {
         return loadFromCookie();
     }
+}
+
+async function getUserData() {
+    const response = await fetch("/bingo/load_progress.php", {
+        method: "GET",
+        credentials: "include"
+    });
+    const result = await response.json();
+        if (!result.success) {
+            console.log("No save for this user yet");
+            return null;
+        }
+    return result;
 }
 
 function updateBoardFromJSON(data) {
