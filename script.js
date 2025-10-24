@@ -5,7 +5,7 @@ const Save = Object.freeze({
 })
 async function fillBingoBoard(force = false) {
     if (!force && loadProgress()) {
-        // console.log("Loaded board from cookie / account!");
+        // console.log("Loaded board from save");
         return;
     }
     console.log(force ? "Forcing new board..." : "No save data found, generating new board...");
@@ -66,21 +66,6 @@ function checkWinDiagonal() {
         return true;
 }
 
-function saveToCookie(type = Save.PROGRESS) {
-    // Load current cookie (if any)
-    let existing = loadCookieData() || {};
-
-    if (type == Save.VALUES || type == Save.BOTH) {
-        existing.values = getValuesToSave();
-    }
-    if (type == Save.PROGRESS || type == Save.BOTH) {
-        existing.progress = getProgressToSave();
-    }
-
-    const expiryDate = getCookieExpiryDate();
-    document.cookie = "bingoData=" + encodeURIComponent(JSON.stringify(existing)) + "; expires=" + expiryDate + "; path=/";
-}
-
 function getValuesToSave() {
     const values = {};
     values["free"] = document.querySelector('#bingo-free .cell-text').textContent;
@@ -99,52 +84,16 @@ function getProgressToSave() {
     return progress;
 }
 
-function loadFromCookie() {
-    const data = loadCookieData();
-    if (updateBoardFromJSON(data))
-        return true;
-    return false;
-}
-
-function loadCookieData() {
-    const cookie = document.cookie.split("; ").find(row => row.startsWith("bingoData="));
-    if (!cookie) return null;
-    try {
-        return JSON.parse(decodeURIComponent(cookie.split("=")[1]));
-    } catch (e) {
-        console.error("Error parsing cookie:", e);
-        return null;
-    }
-}
-
-function getCookieExpiryDate() {
-    const date = new Date();
-
-    if (date.getHours() >= 9) {
-        date.setDate(date.getDate() + 1);
-    }
-
-    date.setHours(9, 0, 0, 0);
-
-    return date.toUTCString();
-}
-
 async function resetBingoBoard() {
-    document.cookie = "bingoData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
-    const user = getLoggedInUser();  
-
-    if (user) {
-        try {
-            const response = await fetch("/bingo/reset_progress.php", {
-                method: "POST",
-                credentials: "include"
-            });
-            const result = await response.json();
-            if (!result.success) console.error("Failed to reset progress:", result.message);
-        } catch (err) {
-            console.error("Error resetting progress:", err);
-        }
+    try {
+        const response = await fetch("/bingo/reset_progress.php", {
+            method: "POST",
+            credentials: "include"
+        });
+        const result = await response.json();
+        if (!result.success) console.error("Failed to reset progress:", result.message);
+    } catch (err) {
+        console.error("Error resetting progress:", err);
     }
 
     clearBingoBoardVisually();
@@ -389,16 +338,10 @@ window.addEventListener("DOMContentLoaded", async () => {
 window.addEventListener("resize", shrinkTextToFit);
 
 async function saveProgress(type = Save.PROGRESS) {
-    const user = localStorage.getItem("loggedInUser");
-    
-    if (user) {
-        saveToUser(type, user);
-    } else {
-        saveToCookie(type);
-    }
+    saveToServer(type);
 }
 
-async function saveToUser(type = Save.PROGRESS, user) {
+async function saveToServer(type = Save.PROGRESS) {
     let existing = await getUserData() || {};
     if (existing.data) {
         existing = existing.data;
@@ -441,24 +384,18 @@ async function syncCookieToServerIfNeeded() {
 }
 
 async function loadProgress() {
-    const user = getLoggedInUser();  
-
-    if (user) {
-        try {
-            const result = await getUserData();
-            if (!result.success) {
-                return false;
-            }
-
-            updateBoardFromJSON(result.data);
-            return true;
-
-        } catch (err) {
-            console.error("Error loading progress:", err);
+    try {
+        const result = await getUserData();
+        if (!result.success) {
             return false;
         }
-    } else {
-        return loadFromCookie();
+
+        updateBoardFromJSON(result.data);
+        return true;
+
+    } catch (err) {
+        console.error("Error loading progress:", err);
+        return false;
     }
 }
 

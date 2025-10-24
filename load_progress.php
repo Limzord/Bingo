@@ -28,13 +28,15 @@ if (isset($_COOKIE[session_name()])) {
 
 header('Content-Type: application/json; charset=utf-8');
 
-if (!isset($_SESSION['user']) || !isset($_SESSION['unix_user'])) {
-    echo json_encode(["success" => false, "message" => "Not logged in"]);
-    exit;
-}
+$dir = __DIR__ . "/saves";
 
-$unixUser = $_SESSION['unix_user'];
-$filename = __DIR__ . "/saves/{$unixUser}.json";
+if (isset($_SESSION['unix_user'])) {
+    $unixUser = $_SESSION['unix_user'];
+    $filename = "$dir/{$unixUser}.json";
+} else {
+    $sessionId = session_id();
+    $filename = "$dir/guest_{$sessionId}.json";
+}
 
 if (!file_exists($filename)) {
     echo json_encode(["success" => false, "message" => "No save found"]);
@@ -43,3 +45,5 @@ if (!file_exists($filename)) {
 
 $data = file_get_contents($filename);
 echo json_encode(["success" => true, "data" => json_decode($data, true)]);
+
+?>

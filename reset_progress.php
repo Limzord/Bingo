@@ -28,16 +28,20 @@ if (isset($_COOKIE[session_name()])) {
 
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['user'])) {
-    echo json_encode(['success' => false, 'message' => 'Not logged in']);
-    exit;
+$dir = __DIR__ . "/saves";
+
+if (isset($_SESSION['unix_user'])) {
+    $unixUser = $_SESSION['unix_user'];
+    $filename = "$dir/{$unixUser}.json";
+} else {
+    $sessionId = session_id();
+    $filename = "$dir/guest_{$sessionId}.json";
 }
 
-$unixUser = $_SESSION['unix_user'];
-$filename = __DIR__ . "/saves/{$unixUser}.json";
-
-unlink($filename);
-
-echo json_encode(['success' => true, 'message' => 'Successfully deleted save data']);
+if (unlink($filename)) {
+    echo json_encode(['success' => true, 'message' => 'Successfully deleted save data']);
+} else {
+    echo json_encode(['success' => false, 'message' => 'Failed to delete save data']);
+}
 
 ?>
