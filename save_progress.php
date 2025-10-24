@@ -47,3 +47,5 @@ if (file_put_contents($filename, json_encode($input))) {
 } else {
     echo json_encode(['success' => false, 'message' => 'Failed to write save file']);
 }
+
+?>
