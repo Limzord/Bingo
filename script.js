@@ -11,7 +11,6 @@ async function fillBingoBoard(force = false) {
     console.log(force ? "Forcing new board..." : "No save data found, generating new board...");
 
     const response = await fetch("/bingo/generate_board.php", { credentials: "include" });
-    console.log(response);
     const elements = await response.json();
 
     updateBoardFromJSON(elements);
@@ -19,7 +18,7 @@ async function fillBingoBoard(force = false) {
 }
 function clickElement(cell) {
     cell.setAttribute("data-clicked", !checkClicked(cell));
-    saveProgress(Save.BOTH);
+    saveProgress(Save.PROGRESS);
 
     if (checkWin()) showWinScreen();
 }
@@ -67,7 +66,7 @@ function checkWinDiagonal() {
         return true;
 }
 
-function saveToCookie(type) {
+function saveToCookie(type = Save.PROGRESS) {
     // Load current cookie (if any)
     let existing = loadCookieData() || {};
 
@@ -387,7 +386,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 });
 window.addEventListener("resize", shrinkTextToFit);
 
-async function saveProgress(type = Save.BOTH) {
+async function saveProgress(type = Save.PROGRESS) {
     const user = localStorage.getItem("loggedInUser");
 
     const data = {};
