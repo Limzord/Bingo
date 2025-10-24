@@ -23,10 +23,8 @@ if ($data) {
     $data = [];
 }
 
-$data['progress'] = $input['progress'];
+$data['progress'] = $input;
 
-$response = saveFile($filename, json_encode($data));
-
-echo $response;
+echo saveFile($filename, json_encode($data));
 
 ?>

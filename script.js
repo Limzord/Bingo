@@ -339,12 +339,11 @@ window.addEventListener("DOMContentLoaded", async () => {
 window.addEventListener("resize", shrinkTextToFit);
 
 async function saveToServer() {
-    data.progress = getProgressToSave();
     try {
         const response = await fetch("/bingo/save_progress.php", {
             method: "POST",
             credentials: "include",
-            body: JSON.stringify(data)
+            body: JSON.stringify(getProgressToSave())
         });
         const result = await response.json();
         if (!result.success) console.error("Failed to save progress:", result.message);
