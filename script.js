@@ -130,7 +130,6 @@ function getCookieExpiryDate() {
 }
 
 async function resetBingoBoard() {
-    // clear cookie
     document.cookie = "bingoData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
     const user = getLoggedInUser();  
@@ -148,6 +147,12 @@ async function resetBingoBoard() {
         }
     }
 
+    clearBingoBoardVisually();
+
+    showOverlay();
+}
+
+function clearBingoBoardVisually() {
     for (let i = 1; i <= 24; i++) {
         const cell = document.getElementById('bingo-' + i);
         if (cell) {
@@ -160,8 +165,6 @@ async function resetBingoBoard() {
         free.innerHTML = '';
         free.removeAttribute("data-clicked");
     }
-
-    showOverlay();
 }
 
 function showWinScreen() {
@@ -238,7 +241,6 @@ function confirmReset() {
     resetBingoBoard();
 }
 
-// === Bingo Reset + Generation ===
 function generateNewBoard() {
     hideOverlay();
     fillBingoBoard(true);
@@ -300,7 +302,7 @@ async function logout() {
 
     localStorage.removeItem("loggedInUser");
 
-    document.cookie = "loggedInUser=; path=/; domain=tmmd.club; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    resetBingoBoard();
 
     updateLoginUI();
   } catch (err) {
