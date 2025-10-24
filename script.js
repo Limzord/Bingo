@@ -285,7 +285,7 @@ async function checkSession() {
 
 function updateLoginUI() {
     const loginArea = document.getElementById("login-area");
-    const user = localStorage.getItem("loggedInUser");
+    const user = getLoggedInUser();
 
     if (user) {
         loginArea.innerHTML = `
@@ -301,7 +301,7 @@ function updateLoginUI() {
         <a id="login-reminder">Log in to save progress across devices</a>
         `;
     }
-    if (!localStorage.getItem("loggedInUser")) {
+    if (!getLoggedInUser()) {
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
 
