@@ -208,10 +208,13 @@ async function login() {
             localStorage.setItem("loggedInUser", data.user);
             updateLoginUI();
 
-            hideOverlay();
-
             if (!await syncGuestSaveToUserIfNeeded()) {
-                loadFromServer();
+                    const loaded = await loadFromServer();
+                    if (loaded) {
+                        hideOverlay();
+                    } else {
+                        showOverlay();
+                    }
             }
         } else {
             usernameInput.value = "";
