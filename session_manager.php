@@ -1,5 +1,7 @@
 <?php
 $session_lifetime = 7 * 24 * 60 * 60;
+ini_set('session.gc_maxlifetime', $session_lifetime);
+ini_set('session.cookie_lifetime', $session_lifetime);
 session_name('PHPSESSID');
 session_set_cookie_params([
     'lifetime' => $session_lifetime,
@@ -25,6 +27,9 @@ if (isset($_COOKIE[session_name()])) {
         ]
     );
 }
+
+session_write_close();
+session_start();
 
 header('Content-Type: application/json; charset=utf-8');
 ?>
