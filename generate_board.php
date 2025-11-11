@@ -6,7 +6,7 @@ $possibleBingoSpaces = json_decode(file_get_contents(__DIR__ . '/bingo.json'), t
 
 $elements = [ 'values' => [], 'progress' => [] ];
 $elements['values']['free'] = $possibleBingoSpaces['free'][array_rand($possibleBingoSpaces['free'])];
-$elements['progress']['free'] = 'false';
+$elements['progress']['free'] = 'true';
 for ($i = 1; $i <= 24; $i++) {
     $randomElement;
     do {
