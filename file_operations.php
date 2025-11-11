@@ -58,8 +58,8 @@ function deleteFile($filename) {
 
 function moveFile($sourceFile, $destinationFile) {
     $directory = getDirectory();
-    $sourceFileLocation = "$directory/$sourcefilename";
-    $destinationFileLocation = "$directory/$sourceFilename";
+    $sourceFileLocation = "$directory/$sourceFile";
+    $destinationFileLocation = "$directory/$destinationFile";
 
     if (!file_exists($sourceFileLocation)) {
         return json_encode(["success" => false, "message" => "There is no guest save to move"]);
