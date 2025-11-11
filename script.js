@@ -287,7 +287,7 @@ function updateLoginUI() {
     } else {
         loginArea.innerHTML = `
         <input type="text" id="email" autofill="tmmd-email" placeholder="Email" />
-        <input type="password" id="password" placeholder="Password" />
+        <input type="password" id="password" autofill="off" placeholder="Password" />
         <button onclick="login()">Login</button>
         <button onclick="register()">Register</button>
         <a id="login-reminder">Log in to save progress across devices</a>
