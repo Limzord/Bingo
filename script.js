@@ -187,7 +187,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 // User Management
 
 async function login() {
-    const usernameInput = document.getElementById("username");
+    const usernameInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
 
     const username = usernameInput.value.trim();
@@ -286,7 +286,7 @@ function updateLoginUI() {
         `;
     } else {
         loginArea.innerHTML = `
-        <input type="text" id="username" placeholder="Email" />
+        <input type="text" id="email" autofill="tmmd-email" placeholder="Email" />
         <input type="password" id="password" placeholder="Password" />
         <button onclick="login()">Login</button>
         <button onclick="register()">Register</button>
@@ -294,7 +294,7 @@ function updateLoginUI() {
         `;
     }
     if (!getLoggedInUser()) {
-    const usernameInput = document.getElementById("username");
+    const usernameInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
 
     [usernameInput, passwordInput].forEach(input => {
