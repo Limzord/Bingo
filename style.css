@@ -107,14 +107,42 @@ html body {
   transform: translate(0, -11px) rotate(45deg);
 }
 
+#source-code{
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    font-size: large;
+    background-color: #f53e4d;
+    border: none;
+    border-radius: 4px;
+    padding: 12px 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#source-code:hover {
+        background-color: #e22c3bd2;
+}
+
 #login-reminder {
     display:none;
+}
+#source-code-mobile {
+    display: none;
 }
 
 @media screen and (max-width: 768px) {
     #login-reminder {
         display: flex;
         font-size: x-large;
+    }
+    #source-code {
+        display: none;
+    }
+    #source-code-mobile {
+        display: flex;
+        font-size: large;
     }
 
     .hamburger-icon {

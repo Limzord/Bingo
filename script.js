@@ -226,34 +226,38 @@ async function login() {
 }
 
 async function logout() {
-  try {
-    await fetch("/logout.php", {
-      method: "POST",
-      credentials: "include"
-    });
+    try {
+        await fetch("/logout.php", {
+            method: "POST",
+            credentials: "include"
+        });
 
-    localStorage.removeItem("loggedInUser");
+        localStorage.removeItem("loggedInUser");
 
-    clearBingoBoardVisually();
+        clearBingoBoardVisually();
 
-    const loaded = await loadFromServer();
-    if (loaded) {
-        hideOverlay();
-    } else {
-        showOverlay();
+        const loaded = await loadFromServer();
+        if (loaded) {
+            hideOverlay();
+        } else {
+            showOverlay();
+        }
+
+        shrinkTextToFit();
+
+        updateLoginUI();
+        } catch (err) {
+        console.error("Logout error:", err);
+        alert("Error logging out. Please try again.");
     }
-
-    shrinkTextToFit();
-
-    updateLoginUI();
-  } catch (err) {
-    console.error("Logout error:", err);
-    alert("Error logging out. Please try again.");
-  }
 }
 
 function register() {
-    window.location.href = "https://support.mail.tmmd.club";
+    window.location.href = "https://support.tmmd.club";
+}
+
+function openSourceCode() {
+    window.location.href = "https://git.tmmd.club/tmmd/Bingo"
 }
 
 async function checkSession() {
@@ -283,6 +287,7 @@ function updateLoginUI() {
         loginArea.innerHTML = `
         <span>Logged in as <strong>${user}</strong></span>
         <button onclick="logout()">Logout</button>
+        <a href="https://git.tmmd.club/tmmd/Bingo" id="source-code-mobile">Source Code</a>
         `;
     } else {
         loginArea.innerHTML = `
@@ -291,6 +296,7 @@ function updateLoginUI() {
         <button onclick="login()">Login</button>
         <button onclick="register()">Register</button>
         <a id="login-reminder">Log in to save progress across devices</a>
+        <a href="https://git.tmmd.club/tmmd/Bingo" id="source-code-mobile">Source Code</a>
         `;
     }
     if (!getLoggedInUser()) {
@@ -308,17 +314,17 @@ function updateLoginUI() {
 }
 
 function getLoggedInUser() {
-  return localStorage.getItem("loggedInUser");
+    return localStorage.getItem("loggedInUser");
 }
 
 window.addEventListener("load", () => {
-  const user = getLoggedInUser();
-  if (user) {
-    console.log("Welcome back, " + user);
-  } else {
-    console.log("Not logged in");
-  }
-  updateLoginUI();
+    const user = getLoggedInUser();
+    if (user) {
+        console.log("Welcome back, " + user);
+    } else {
+        console.log("Not logged in");
+    }
+    updateLoginUI();
 });
 
 // End of Game
